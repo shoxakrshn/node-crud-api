@@ -5,7 +5,9 @@
   "main": "./src/index.ts",
   "scripts": {
     "build:dev": "webpack --env mode=development",
-    "build:prod": "webpack --env mode=production"
+    "build:prod": "webpack --env mode=production",
+    "start:dev": "nodemon",
+    "start:prod": "npm run build:prod && node ./dist/main.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +20,8 @@
   },
   "homepage": "https://github.com/shoxakrshn/node-crud-api#readme",
   "devDependencies": {
-    "@types/node": "^20.11.7",
+    "@types/node": "^20.11.9",
+    "@types/webpack": "^5.28.5",
     "nodemon": "^3.0.3",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
