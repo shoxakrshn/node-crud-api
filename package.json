@@ -26,6 +26,7 @@
   "homepage": "https://github.com/shoxakrshn/node-crud-api#readme",
   "devDependencies": {
     "@types/node": "^20.11.9",
+    "@types/uuid": "^9.0.8",
     "@types/webpack": "^5.28.5",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
@@ -47,5 +48,9 @@
       "prettier --write",
       "eslint --max-warnings 0 ."
     ]
+  },
+  "dependencies": {
+    "dotenv": "^16.4.1",
+    "uuid": "^9.0.1"
   }
 }
