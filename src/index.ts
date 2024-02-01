@@ -1,5 +1,8 @@
-const sum = (a: number, b: number) => a + b;
+import dotenv from 'dotenv';
+import app from './app';
 
-console.log(sum(4, 2));
+dotenv.config();
 
-console.log('hello Webpask');
+const port = process.env.PORT || '3000';
+
+app(port);
