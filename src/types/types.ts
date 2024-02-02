@@ -6,3 +6,14 @@ export type UserType = {
 };
 
 export type BodyType = Omit<UserType, 'id'>;
+
+export type WorkerType = {
+  host: string;
+  port: number;
+};
+
+export type MessageType = {
+  type: string;
+  data?: UserType;
+  userId?: string;
+};
