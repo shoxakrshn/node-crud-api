@@ -1,8 +1,10 @@
 import dotenv from 'dotenv';
-import app from './app';
+import { single } from './single';
+import { multiCluster } from './cluster';
 
 dotenv.config();
 
 const port = process.env.PORT || '3000';
+const mode = process.env.MODE;
 
-app(port);
+mode == 'multi' ? multiCluster(port) : single(port);
