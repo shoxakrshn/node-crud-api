@@ -1,12 +1,12 @@
 import http, { IncomingMessage, ServerResponse } from 'node:http';
-import * as controller from './contoroller/index';
+import * as multiController from './controllers/multi/index';
 import { endpoint } from './utils/constants';
 
 const requestHandler = {
-  GET: controller.getUsers,
-  POST: controller.addUser,
-  PUT: controller.updateUser,
-  DELETE: controller.deleteUser,
+  GET: multiController.getUsers,
+  POST: multiController.addUser,
+  PUT: multiController.updateUser,
+  DELETE: multiController.deleteUser,
 };
 
 const app = (port: string) => {
