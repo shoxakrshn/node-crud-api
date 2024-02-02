@@ -1,23 +1,26 @@
 import cluster from 'node:cluster';
 import os from 'node:os';
-import dotenv from 'dotenv';
 import app from './app';
+import { serviceHandler } from './service/serviceHandler';
+import { loadBalancer } from './utils/loadBalancer';
 
-dotenv.config();
+export const multiCluster = (port: string) => {
+  const totalCpus = os.cpus().length;
+  if (cluster.isPrimary) {
+    for (let i = 0; i < totalCpus; i += 1) {
+      cluster.fork();
+    }
 
-const cpus = os.cpus().length;
+    loadBalancer().listen(port, () => console.log(`Load balancer is listening on port ${port}`));
 
-if (cluster.isPrimary) {
-  for (let i = 0; i < cpus; i += 1) {
-    cluster.fork();
+    cluster.on('message', serviceHandler);
+
+    cluster.on('exit', (worker) => {
+      console.log(`Worker ${worker.process.pid} died`);
+      cluster.fork();
+    });
+  } else {
+    const clusterPort = +port + cluster.worker.id;
+    app(`${clusterPort}`);
   }
-
-  cluster.on('exit', (worker) => {
-    console.log(`Worker ${worker.process.pid} died`);
-    cluster.fork();
-  });
-} else {
-  const port = +(process.env.PORT || '3000') + cluster.worker.id;
-
-  app(`${port}`);
-}
+};
