@@ -1,10 +1,15 @@
 import dotenv from 'dotenv';
-import { single } from './single';
-import { multiCluster } from './cluster';
+import Application from './app';
 
 dotenv.config();
 
 const port = process.env.PORT || '3000';
 const mode = process.env.MODE;
 
-mode == 'multi' ? multiCluster(port) : single(port);
+const server = new Application();
+
+if (mode === 'multi') {
+  server.listenMulti(port);
+} else {
+  server.listen(port);
+}
