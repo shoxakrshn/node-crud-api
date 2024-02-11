@@ -5,6 +5,7 @@ import { serviceHandler } from './service/serviceHandler';
 import { loadBalancer } from './utils/loadBalancer';
 import { eHttpCode, endpoint } from './utils/constants';
 import { controllerHandler } from './controllers/controllerHandler';
+import { AddressInfo } from 'node:net';
 
 class App {
   public server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>;
@@ -25,7 +26,8 @@ class App {
         }
 
         if (req.method in controllerHandler) {
-          // console.log(`this response from ${port}`);
+          const address: AddressInfo = this.server.address() as AddressInfo;
+          console.log(`This response from server: http://localhost:${address.port}`);
           const handler = controllerHandler[req.method as keyof typeof controllerHandler];
           handler(req, res);
         } else {
