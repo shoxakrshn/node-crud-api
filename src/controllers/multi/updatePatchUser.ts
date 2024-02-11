@@ -34,7 +34,6 @@ export const updatePatchUser = (req: IncomingMessage, res: ServerResponse) => {
             res.writeHead(eHttpCode.notFound, { 'Content-Type': 'text/plain' });
             res.end("User doesn't exist");
             res.closed;
-            return;
           } else {
             res.writeHead(eHttpCode.ok, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify(data));

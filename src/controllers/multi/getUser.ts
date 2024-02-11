@@ -11,11 +11,10 @@ export const getUser = (req: IncomingMessage, res: ServerResponse) => {
     if (!data) {
       res.writeHead(eHttpCode.notFound, { 'Content-Type': 'text/plain' });
       res.end("User doesn't exist");
-      return;
+    } else {
+      res.writeHead(eHttpCode.ok, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(data));
     }
-
-    res.writeHead(eHttpCode.ok, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(data));
 
     process.off('message', messageListener<UserType[]>);
   };
@@ -29,6 +28,7 @@ export const getUser = (req: IncomingMessage, res: ServerResponse) => {
     if (!uuidValidate(userId)) {
       res.writeHead(eHttpCode.badRequest, { 'Content-Type': 'text/plain' });
       res.end('Invalid UUID of user');
+
       return;
     }
 
@@ -37,6 +37,7 @@ export const getUser = (req: IncomingMessage, res: ServerResponse) => {
   } else {
     res.writeHead(eHttpCode.notFound, { 'Contenet-Type': 'text/plain' });
     res.end('Page Not Found');
+
     return;
   }
 };

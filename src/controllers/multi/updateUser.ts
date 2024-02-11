@@ -34,7 +34,6 @@ export const updateUser = (req: IncomingMessage, res: ServerResponse) => {
             res.writeHead(eHttpCode.notFound, { 'Content-Type': 'text/plain' });
             res.end("User doesn't exist");
             res.closed;
-            return;
           } else if (data === -2) {
             res.writeHead(eHttpCode.badRequest, { 'Content-Type': 'text/plain' });
             res.end('body does not contain required fields');
