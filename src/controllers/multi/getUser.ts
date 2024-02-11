@@ -1,8 +1,9 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { validate as uuidValidate } from 'uuid';
-import { endpoint } from '../../utils/constants';
-import { getUserID } from '../../utils/getUserId';
 import { UserType } from '../../types/types';
+import { checkApiUsersPath } from '../../utils/checkApiPath';
+import { isValidApiUsersPath } from '../../utils/isValidApiUsersPath';
+import { extractUserId } from '../../utils/extractUserId';
 
 export const getUsers = (req: IncomingMessage, res: ServerResponse) => {
   const messageListener = <T>(data: T) => {
@@ -18,11 +19,11 @@ export const getUsers = (req: IncomingMessage, res: ServerResponse) => {
     process.off('message', messageListener<UserType[]>);
   };
 
-  if (req.url === endpoint) {
+  if (checkApiUsersPath(req.url)) {
     process.send({ type: 'GET_ALL' });
     process.on('message', messageListener);
-  } else if (req.url.startsWith(endpoint)) {
-    const userId = getUserID(req.url, endpoint);
+  } else if (isValidApiUsersPath(req.url)) {
+    const userId = extractUserId(req.url);
 
     if (!uuidValidate(userId)) {
       res.writeHead(400, { 'Content-Type': 'text/plain' });
@@ -32,5 +33,9 @@ export const getUsers = (req: IncomingMessage, res: ServerResponse) => {
 
     process.send({ type: 'GET', userId });
     process.on('message', messageListener<UserType | null>);
+  } else {
+    res.writeHead(404, { 'Contenet-Type': 'text/plain' });
+    res.end('Page Not Found');
+    return;
   }
 };

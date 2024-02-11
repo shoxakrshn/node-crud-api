@@ -1,11 +1,11 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { validate as uuidValidate } from 'uuid';
-import { endpoint } from '../../utils/constants';
-import { getUserID } from '../../utils/getUserId';
+import { isValidApiUsersPath } from '../../utils/isValidApiUsersPath';
+import { extractUserId } from '../../utils/extractUserId';
 
 export const deleteUser = (req: IncomingMessage, res: ServerResponse) => {
-  if (req.url.startsWith(endpoint)) {
-    const userId = getUserID(req.url, endpoint);
+  if (isValidApiUsersPath(req.url)) {
+    const userId = extractUserId(req.url);
 
     if (!uuidValidate(userId)) {
       res.writeHead(400, { 'Content-Type': 'text/plain' });
@@ -28,5 +28,9 @@ export const deleteUser = (req: IncomingMessage, res: ServerResponse) => {
     process.send({ type: 'DELETE', userId });
 
     process.on('message', messageHandler);
+  } else {
+    res.writeHead(404, { 'Contenet-Type': 'text/plain' });
+    res.end('Page Not Found');
+    return;
   }
 };
