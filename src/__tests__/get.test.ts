@@ -35,7 +35,7 @@ describe('Test GET operations', () => {
     expect(invalidUuidResponse.statusCode).toBe(400);
     expect(invalidUuidResponse.text).toBe('Invalid UUID of user');
 
-    const userNotExistResponse = await request(server).get(`${path}.${uuidv4()}`);
+    const userNotExistResponse = await request(server).get(`${path}/${uuidv4()}`);
     expect(userNotExistResponse.statusCode).toBe(404);
     expect(userNotExistResponse.text).toBe("User doesn't exist");
   });
