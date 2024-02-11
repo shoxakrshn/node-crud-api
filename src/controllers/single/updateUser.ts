@@ -4,6 +4,7 @@ import { users } from '../../utils/usersDb';
 import { UserType } from '../../types/types';
 import { isValidApiUsersPath } from '../../utils/isValidApiUsersPath';
 import { extractUserId } from '../../utils/extractUserId';
+import { isValidBody } from '../../utils/isValidBody';
 
 export const updateUser = (req: IncomingMessage, res: ServerResponse) => {
   if (isValidApiUsersPath(req.url)) {
@@ -36,11 +37,18 @@ export const updateUser = (req: IncomingMessage, res: ServerResponse) => {
 
     req.on('end', () => {
       try {
-        const updatedUser: UserType = { ...users[userIndex], ...JSON.parse(body) };
-        users[userIndex] = updatedUser;
+        const bodyData: UserType = JSON.parse(body);
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(updatedUser));
+        if (isValidBody(bodyData)) {
+          const updatedUser: UserType = { id: users[userIndex].id, ...bodyData };
+          users[userIndex] = updatedUser;
+
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(updatedUser));
+        } else {
+          res.writeHead(400, { 'Content-Type': 'text/plain' });
+          res.end('body does not contain required fields');
+        }
       } catch {
         res.writeHead(500, { 'Contenet-Type': 'text/plain' });
         res.end('Server Internal Error');
