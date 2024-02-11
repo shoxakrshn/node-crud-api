@@ -47,4 +47,15 @@ export class UserService {
       worker.send(-1);
     }
   };
+
+  public patch = (worker: Worker, db: UserType[], message: MessageType) => {
+    const userIndex = db.findIndex(({ id }) => id === message.userId);
+    if (userIndex !== -1) {
+      const updatedUser: UserType = { ...db[userIndex], ...message.data };
+      db[userIndex] = updatedUser;
+      worker.send(updatedUser);
+    } else {
+      worker.send(-1);
+    }
+  };
 }

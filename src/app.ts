@@ -8,9 +8,10 @@ import * as singleController from './controllers/single/index';
 import * as multiController from './controllers/multi/index';
 
 const requestHandler = {
-  GET: process.env.MODE ? multiController.getUsers : singleController.getUsers,
-  POST: process.env.MODE ? multiController.addUser : singleController.addUser,
-  PUT: process.env.MODE ? multiController.updateUser : singleController.updateUser,
+  GET: process.env.MODE === 'multi' ? multiController.getUsers : singleController.getUsers,
+  POST: process.env.MODE === 'multi' ? multiController.addUser : singleController.addUser,
+  PUT: process.env.MODE === 'multi' ? multiController.updateUser : singleController.updateUser,
+  PATCH: process.env.MODE === 'multi' ? multiController.updatePatchUser : singleController.updatePatchUser,
   DELETE: process.env.MODE ? multiController.deleteUser : singleController.deleteUser,
 };
 

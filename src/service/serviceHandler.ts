@@ -12,6 +12,7 @@ const handlerMessage = {
   GET: service.getUser,
   POST: service.post,
   PUT: service.put,
+  PATCH: service.patch,
   DELETE: service.delete,
 };
 
