@@ -1,12 +1,12 @@
 import { IncomingMessage, ServerResponse } from 'http';
-import { endpoint } from '../../utils/constants';
 import { v4 as uuidv4 } from 'uuid';
 import { users } from '../../utils/usersDb';
 import type { BodyType, UserType } from '../../types/types';
 import { isValidBody } from '../../utils/isValidBody';
+import { checkApiUsersPath } from '../../utils/checkApiPath';
 
 export const addUser = (req: IncomingMessage, res: ServerResponse) => {
-  if (req.url !== endpoint) {
+  if (!checkApiUsersPath(req.url)) {
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Incorrect endpoint');
   }
