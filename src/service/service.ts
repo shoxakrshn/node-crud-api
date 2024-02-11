@@ -1,5 +1,6 @@
 import { Worker } from 'node:cluster';
 import { UserType, MessageType } from '../types/types';
+import { isValidBody } from '../utils/isValidBody';
 
 export class UserService {
   public getUser = (worker: Worker, db: UserType[], message: MessageType) => {
@@ -35,9 +36,13 @@ export class UserService {
   public put = (worker: Worker, db: UserType[], message: MessageType) => {
     const userIndex = db.findIndex(({ id }) => id === message.userId);
     if (userIndex !== -1) {
-      const updatedUser: UserType = { ...db[userIndex], ...message.data };
-      db[userIndex] = updatedUser;
-      worker.send(updatedUser);
+      if (isValidBody(message.data)) {
+        const updatedUser: UserType = { ...db[userIndex], ...message.data };
+        db[userIndex] = updatedUser;
+        worker.send(updatedUser);
+      } else {
+        worker.send(-2);
+      }
     } else {
       worker.send(-1);
     }

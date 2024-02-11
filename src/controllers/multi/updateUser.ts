@@ -34,6 +34,10 @@ export const updateUser = (req: IncomingMessage, res: ServerResponse) => {
             res.end("User doesn't exist");
             res.closed;
             return;
+          } else if (data === -2) {
+            res.writeHead(400, { 'Content-Type': 'text/plain' });
+            res.end('body does not contain required fields');
+            res.closed;
           } else {
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify(data));
