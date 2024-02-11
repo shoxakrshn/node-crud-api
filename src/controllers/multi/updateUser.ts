@@ -2,13 +2,14 @@ import { IncomingMessage, ServerResponse } from 'http';
 import { validate as uuidValidate } from 'uuid';
 import { isValidApiUsersPath } from '../../utils/isValidApiUsersPath';
 import { extractUserId } from '../../utils/extractUserId';
+import { eHttpCode } from '../../utils/constants';
 
 export const updateUser = (req: IncomingMessage, res: ServerResponse) => {
   if (isValidApiUsersPath(req.url)) {
     const userId = extractUserId(req.url);
 
     if (!uuidValidate(userId)) {
-      res.writeHead(400, { 'Content-Type': 'text/plain' });
+      res.writeHead(eHttpCode.badRequest, { 'Content-Type': 'text/plain' });
       res.end('Invalid UUID of user');
       return;
     }
@@ -19,7 +20,7 @@ export const updateUser = (req: IncomingMessage, res: ServerResponse) => {
       try {
         body += chunk;
       } catch {
-        res.writeHead(500, { 'Contenet-Type': 'text/plain' });
+        res.writeHead(eHttpCode.internalServerError, { 'Contenet-Type': 'text/plain' });
         res.end('Server Internal Error');
       }
     });
@@ -30,16 +31,16 @@ export const updateUser = (req: IncomingMessage, res: ServerResponse) => {
 
         const messageHandler = (data: number) => {
           if (data === -1) {
-            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.writeHead(eHttpCode.notFound, { 'Content-Type': 'text/plain' });
             res.end("User doesn't exist");
             res.closed;
             return;
           } else if (data === -2) {
-            res.writeHead(400, { 'Content-Type': 'text/plain' });
+            res.writeHead(eHttpCode.badRequest, { 'Content-Type': 'text/plain' });
             res.end('body does not contain required fields');
             res.closed;
           } else {
-            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.writeHead(eHttpCode.ok, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify(data));
             res.closed;
           }
@@ -49,12 +50,12 @@ export const updateUser = (req: IncomingMessage, res: ServerResponse) => {
 
         process.on('message', messageHandler);
       } catch {
-        res.writeHead(500, { 'Contenet-Type': 'text/plain' });
+        res.writeHead(eHttpCode.internalServerError, { 'Contenet-Type': 'text/plain' });
         res.end('Server Internal Error');
       }
     });
   } else {
-    res.writeHead(404, { 'Contenet-Type': 'text/plain' });
+    res.writeHead(eHttpCode.notFound, { 'Contenet-Type': 'text/plain' });
     res.end('Page Not Found');
     return;
   }

@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type { BodyType, UserType } from '../../types/types';
 import { isValidBody } from '../../utils/isValidBody';
 import { checkApiUsersPath } from '../../utils/checkApiPath';
+import { eHttpCode } from '../../utils/constants';
 
 export const addUser = (req: IncomingMessage, res: ServerResponse) => {
   if (!checkApiUsersPath(req.url)) {
@@ -16,7 +17,7 @@ export const addUser = (req: IncomingMessage, res: ServerResponse) => {
     try {
       body += chunk;
     } catch {
-      res.writeHead(500, { 'Contenet-Type': 'text/plain' });
+      res.writeHead(eHttpCode.internalServerError, { 'Contenet-Type': 'text/plain' });
       res.end('Server Internal Error');
     }
   });
@@ -29,7 +30,7 @@ export const addUser = (req: IncomingMessage, res: ServerResponse) => {
         const newUser: UserType = { id: uuidv4(), ...bodyData };
 
         const messageHandler = (message: UserType) => {
-          res.writeHead(201, { 'Content-Type': 'application/json' });
+          res.writeHead(eHttpCode.created, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify(message));
 
           process.off('message', messageHandler);
@@ -39,11 +40,11 @@ export const addUser = (req: IncomingMessage, res: ServerResponse) => {
 
         process.on('message', messageHandler);
       } else {
-        res.writeHead(400, { 'Content-Type': 'text/plain' });
+        res.writeHead(eHttpCode.badRequest, { 'Content-Type': 'text/plain' });
         res.end('body does not contain required fields');
       }
     } catch (error) {
-      res.writeHead(400, { 'Content-Type': 'text/plain' });
+      res.writeHead(eHttpCode.badRequest, { 'Content-Type': 'text/plain' });
       res.end('body does not contain required fields');
     }
   });

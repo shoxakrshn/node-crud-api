@@ -3,7 +3,7 @@ import cluster from 'node:cluster';
 import os from 'node:os';
 import { serviceHandler } from './service/serviceHandler';
 import { loadBalancer } from './utils/loadBalancer';
-import { endpoint } from './utils/constants';
+import { eHttpCode, endpoint } from './utils/constants';
 import * as singleController from './controllers/single/index';
 import * as multiController from './controllers/multi/index';
 
@@ -15,7 +15,7 @@ const requestHandler = {
   DELETE: process.env.MODE ? multiController.deleteUser : singleController.deleteUser,
 };
 
-class Application {
+class App {
   public server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>;
   private totalCpus: number;
 
@@ -28,7 +28,7 @@ class Application {
     return http.createServer((req: IncomingMessage, res: ServerResponse) => {
       try {
         if (!req.url.startsWith(endpoint)) {
-          res.writeHead(404, { 'Contenet-Type': 'text/plain' });
+          res.writeHead(eHttpCode.notFound, { 'Contenet-Type': 'text/plain' });
           res.end('Page Not Found');
           return;
         }
@@ -38,29 +38,14 @@ class Application {
           const handler = requestHandler[req.method as keyof typeof requestHandler];
           handler(req, res);
         } else {
-          res.writeHead(405, { 'Contenet-Type': 'text/plain' });
+          res.writeHead(eHttpCode.methodNotAllowed, { 'Contenet-Type': 'text/plain' });
           res.end(`Method Not Allowed: ${req.method} is not supported.`);
         }
       } catch {
-        res.writeHead(500, { 'Contenet-Type': 'text/plain' });
+        res.writeHead(eHttpCode.internalServerError, { 'Contenet-Type': 'text/plain' });
         res.end('Server Internal Error');
       }
     });
-  };
-
-  private launchSingle = (port: string) => {
-    if (cluster.isPrimary) {
-      cluster.fork();
-
-      cluster.on('message', serviceHandler);
-
-      cluster.on('exit', (worker) => {
-        console.log(`Worker ${worker.process.pid} died`);
-        cluster.fork();
-      });
-    } else {
-      this.listen(port);
-    }
   };
 
   public listenMulti = (port: string) => {
@@ -94,4 +79,4 @@ class Application {
   };
 }
 
-export default Application;
+export default App;
