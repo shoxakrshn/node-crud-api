@@ -4,16 +4,7 @@ import os from 'node:os';
 import { serviceHandler } from './service/serviceHandler';
 import { loadBalancer } from './utils/loadBalancer';
 import { eHttpCode, endpoint } from './utils/constants';
-import * as singleController from './controllers/single/index';
-import * as multiController from './controllers/multi/index';
-
-const requestHandler = {
-  GET: process.env.MODE === 'multi' ? multiController.getUsers : singleController.getUsers,
-  POST: process.env.MODE === 'multi' ? multiController.addUser : singleController.addUser,
-  PUT: process.env.MODE === 'multi' ? multiController.updateUser : singleController.updateUser,
-  PATCH: process.env.MODE === 'multi' ? multiController.updatePatchUser : singleController.updatePatchUser,
-  DELETE: process.env.MODE ? multiController.deleteUser : singleController.deleteUser,
-};
+import { controllerHandler } from './controllers/controllerHandler';
 
 class App {
   public server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>;
@@ -33,9 +24,9 @@ class App {
           return;
         }
 
-        if (req.method in requestHandler) {
+        if (req.method in controllerHandler) {
           // console.log(`this response from ${port}`);
-          const handler = requestHandler[req.method as keyof typeof requestHandler];
+          const handler = controllerHandler[req.method as keyof typeof controllerHandler];
           handler(req, res);
         } else {
           res.writeHead(eHttpCode.methodNotAllowed, { 'Contenet-Type': 'text/plain' });

@@ -6,7 +6,7 @@ import { isValidApiUsersPath } from '../../utils/isValidApiUsersPath';
 import { extractUserId } from '../../utils/extractUserId';
 import { eHttpCode } from '../../utils/constants';
 
-export const getUsers = (req: IncomingMessage, res: ServerResponse) => {
+export const getUser = (req: IncomingMessage, res: ServerResponse) => {
   if (checkApiUsersPath(req.url)) {
     res.writeHead(eHttpCode.ok, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(users));

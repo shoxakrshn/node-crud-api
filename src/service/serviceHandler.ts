@@ -1,7 +1,7 @@
 import { Worker } from 'node:cluster';
 import { users } from '../utils/usersDb';
 import { MessageType } from '../types/types';
-import { UserService } from './service';
+import { UserService } from './UserService';
 
 const db = users;
 

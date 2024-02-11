@@ -6,7 +6,7 @@ import { isValidApiUsersPath } from '../../utils/isValidApiUsersPath';
 import { extractUserId } from '../../utils/extractUserId';
 import { eHttpCode } from '../../utils/constants';
 
-export const getUsers = (req: IncomingMessage, res: ServerResponse) => {
+export const getUser = (req: IncomingMessage, res: ServerResponse) => {
   const messageListener = <T>(data: T) => {
     if (!data) {
       res.writeHead(eHttpCode.notFound, { 'Content-Type': 'text/plain' });
