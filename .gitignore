@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 coverage/
+src/ulibi
 
 # Editor directories and files
 .vscode/*
