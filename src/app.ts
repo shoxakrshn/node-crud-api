@@ -47,7 +47,7 @@ class App {
         cluster.fork();
       }
 
-      loadBalancer().listen(port, () => console.log(`Load balancer is listening on port ${port}`));
+      loadBalancer(port).listen(port, () => console.log(`Load balancer is listening on port ${port}`));
 
       cluster.on('message', serviceHandler);
 

@@ -4,17 +4,16 @@ import { cpus } from 'node:os';
 import type { WorkerType } from '../types/types';
 
 dotenv.config();
-
 const httpAgent = new http.Agent({ keepAlive: true });
 const totalCpus = cpus().length;
-const targets: WorkerType[] = [];
+
 let current = 0;
 
-for (let i = 1; i < totalCpus; i += 1) {
-  targets.push({ host: 'localhost', port: 4000 + i });
-}
-
-export const loadBalancer = () => {
+export const loadBalancer = (port: string) => {
+  const targets: WorkerType[] = [];
+  for (let i = 1; i < totalCpus; i += 1) {
+    targets.push({ host: 'localhost', port: +port + i });
+  }
   const server = http.createServer((req: IncomingMessage, res: ServerResponse) => {
     try {
       const target = targets[current];
